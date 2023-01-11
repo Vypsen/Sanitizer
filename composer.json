@@ -1,0 +1,24 @@
+{
+  "name": "vypsen/sanitizer",
+  "description": "sanitizer lib for php",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Sergei Semenets",
+      "email": "s.semenets2001@mail.ru"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "^9"
+  },
+  "require": {
+    "php": "^8.0",
+    "ext-pgsql": "*",
+    "phpunit/phpunit": "^9"
+  },
+  "autoload": {
+    "psr-4": {
+      "Vypsen\\Sanitizer\\": "src/"
+    }
+  }
+}
