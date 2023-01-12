@@ -6,22 +6,19 @@ use Vypsen\Sanitizer\Interfaces\Filter;
 
 class Integer implements Filter
 {
-    public function sanitize($int)
+    public function sanitize($value, $option = null): int
     {
-        $valid = filter_var($int, FILTER_VALIDATE_INT);
-        if ($valid === false) {
-            return "Integer is not valid";
-        }
-        return $valid;
+        $digit = (int) $value;
+        return $digit;
     }
 
-    public function validation($value)
+    public function validation($value): bool
     {
-        // TODO: Implement validation() method.
+        return is_numeric($value);
     }
 
-    public function errorMessageValid()
+    public function errorMessageValid(): string
     {
-        // TODO: Implement errorMessageValid() method.
+        return "Integer is not valid";
     }
 }

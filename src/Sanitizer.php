@@ -2,17 +2,34 @@
 
 namespace Vypsen\Sanitizer;
 
+use Vypsen\Sanitizer\Filters\ArrayFilter;
+use Vypsen\Sanitizer\Filters\FloatFilter;
 use Vypsen\Sanitizer\Filters\Integer;
 use Vypsen\Sanitizer\Filters\RussianNumberPhone;
+use Vypsen\Sanitizer\Filters\StringFilter;
 use Vypsen\Sanitizer\Interfaces\Filter;
 
 class Sanitizer
 {
+    protected static $tegFilters = [
+        'int' => Integer::class,
+        'string' => StringFilter::class,
+        'float' => FloatFilter::class,
+        'ru_number_phone' => RussianNumberPhone::class,
+        'array' => ArrayFilter::class,
+    ];
 
-    protected static function validation($value, Filter $filter)
+    protected static function validation($value, $filter)
     {
-        if ($filter->validation($value)) return true;
-        return $filter->errorMessageValid();
+        if (self::existFilter($filter))
+        {
+            if ($filter->validation($value)) return true;
+            return $filter->errorMessageValid();
+        }
+        else {
+            $nameClass = $filter::class;
+            throw new \Exception("{$nameClass} must be implements Vypsen\Sanitizer\Interfaces\Filter");
+        }
     }
 
     public static function applySanitizers($data, $filters)
@@ -21,44 +38,54 @@ class Sanitizer
         $answer = [];
         if (count((array)$data) < count($filters))
         {
-            return throw new \Exception('присутсвуют лишние фильтры');
+            return throw new \Exception('there are extra filters');
         }
 
         foreach ($data as $key => $value)
         {
-            $objectFilter = new $filters[$key];
-
-
-
-            $valid = self::validation($value, $filters[$key]);
-            if ($valid === true )
+            if (array_key_exists($key, $filters))
             {
-                $answer[$key] = self::apply($value, $filters[$key]);
+                $filter = self::parseFilter($filters[$key])[0];
+                $option = self::parseFilter($filters[$key])[1];
+
+                if (array_key_exists($filter, self::$tegFilters))
+                {
+                    $answer[$key] = self::apply($value, self::$tegFilters[$filter], $option);
+                }
             } else {
-                $answer[$key] = $valid;
+                $answer[$key] = $value;
             }
         }
-
         return $answer;
     }
 
-    protected static function checkFilter(Filter $filter)
+    protected static function parseFilter($filters)
+    {
+        if (is_array($filters))
+        {
+            $filter = $filters[0];
+            $option = $filters[1];
+        } else {
+            $filter = $filters;
+            $option = null;
+        }
+        return [$filter, $option];
+    }
+    protected static function existFilter($filter)
+    {
+        if (!($filter instanceof Filter) || empty($filter)) {
+            return false;
+        }
+        return true;
+    }
+
+    protected static function apply($value, $filter, $option)
     {
         $objectFilter = new $filter;
-
-        if ($objectFilter instanceof Filter) {
-            return true;
+        $valid = self::validation($value, $objectFilter);
+        if ($valid !== true) {
+            return $valid;
         }
-        return throw new \Exception('такого фильра нет');
+        return $objectFilter->sanitize($value, $option);
     }
-
-    protected static function apply($value, Filter $filter)
-    {
-        if (empty($filter))
-        {
-            return '';
-        }
-
-    }
-
 }

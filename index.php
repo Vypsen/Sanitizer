@@ -3,13 +3,15 @@
 require_once __DIR__ . '/vendor/autoload.php';
 use Vypsen\Sanitizer\Sanitizer;
 
-$t = '121й3';
-$data = '{"foo": "123", "bar": "asd", "baz": "8 (950) 288-56-23"}';
+$data = '{"foo": "123", "bar": "123.1", "baz": "8 (950) 288-56-23", "arr": ["1","2",3]}';
 
 $filters = [
-    "foo" => \Vypsen\Sanitizer\Filters\Integer::class,
-    "bar" => \Vypsen\Sanitizer\Filters\Stringq::class,
-    "baz" => \Vypsen\Sanitizer\Filters\RussianNumberPhone::class,
+    "foo" => 'int',
+    "bar" => 'inter',
+    "baz" => 'ru_number_phone',
 ];
 
 $sanitizer = Sanitizer::applySanitizers($data, $filters);
+var_dump($sanitizer);
+
+
