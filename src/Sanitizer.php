@@ -4,19 +4,20 @@ namespace Vypsen\Sanitizer;
 
 use Vypsen\Sanitizer\Filters\ArrayFilter;
 use Vypsen\Sanitizer\Filters\FloatFilter;
-use Vypsen\Sanitizer\Filters\Integer;
-use Vypsen\Sanitizer\Filters\RussianNumberPhone;
+use Vypsen\Sanitizer\Filters\IntegerFilter;
+use Vypsen\Sanitizer\Filters\RussianNumberPhoneFilter;
 use Vypsen\Sanitizer\Filters\StringFilter;
 use Vypsen\Sanitizer\Interfaces\Filter;
 
 class Sanitizer
 {
     protected static $tegFilters = [
-        'int' => Integer::class,
+        'int' => IntegerFilter::class,
         'string' => StringFilter::class,
         'float' => FloatFilter::class,
-        'ru_number_phone' => RussianNumberPhone::class,
+        'ru_number_phone' => RussianNumberPhoneFilter::class,
         'array' => ArrayFilter::class,
+        'structure'
     ];
 
     protected static function validation($value, $filter)
@@ -32,7 +33,7 @@ class Sanitizer
         }
     }
 
-    public static function applySanitizers($data, $filters)
+    public static function applySanitizers($data, $filters = null)
     {
         $data = json_decode($data);
         $answer = [];
@@ -51,6 +52,8 @@ class Sanitizer
                 if (array_key_exists($filter, self::$tegFilters))
                 {
                     $answer[$key] = self::apply($value, self::$tegFilters[$filter], $option);
+                } else if (is_object($filter)) {
+                    $answer[$key] = self::apply($value, $filter, $option);
                 }
             } else {
                 $answer[$key] = $value;
@@ -79,7 +82,7 @@ class Sanitizer
         return true;
     }
 
-    protected static function apply($value, $filter, $option)
+    protected static function apply($value, $filter, $option = null)
     {
         $objectFilter = new $filter;
         $valid = self::validation($value, $objectFilter);

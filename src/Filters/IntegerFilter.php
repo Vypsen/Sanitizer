@@ -4,7 +4,7 @@ namespace Vypsen\Sanitizer\Filters;
 
 use Vypsen\Sanitizer\Interfaces\Filter;
 
-class Integer implements Filter
+class IntegerFilter implements Filter
 {
     public function sanitize($value, $option = null): int
     {
@@ -19,6 +19,6 @@ class Integer implements Filter
 
     public function errorMessageValid(): string
     {
-        return "Integer is not valid";
+        return "IntegerFilter is not valid";
     }
 }
