@@ -15,8 +15,6 @@ class ArrayFilter implements Filter
                 return array_map('intval', $value);
             case 'float':
                 return array_map('floatval', $value);
-            case 'null':
-                return array_map(null, $value);
             case 'bool':
                 return array_map('boolval', $value);
             default:

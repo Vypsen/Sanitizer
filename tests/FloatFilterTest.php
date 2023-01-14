@@ -46,8 +46,8 @@ class FloatFilterTest extends TestCase
         $filter1 = ['value' => 'float'];
         $this->assertSame($expected, $this->sanitizer::applySanitizers($data1, $filter1));
 
-        $data2 = '{"value": 123}';
-        $filter2 = ['value' => 'float'];
-        $this->assertSame($expected, $this->sanitizer::applySanitizers($data2, $filter2));
+        $data1 = '{"value": 123}';
+        $filter1 = ['value' => 'float'];
+        $this->assertSame($expected, $this->sanitizer::applySanitizers($data1, $filter1));
     }
 }
