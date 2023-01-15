@@ -48,6 +48,26 @@ class SanitizeTest extends TestCase
         $this->assertSame($expected, $this->sanitizer::applySanitizers($data, $filters));
     }
 
+    public function testDefaultAndCustomFilters2()
+    {
+        $data = '{"foo": "123", "bar": "asd", "baz": "8 (950) 288-56-23", "qwe": {"123": "qwerty", "qwe": "3123"}}';
+        $filters = [
+            "foo" => 'int',
+            "bar" => \CustomFilters\CapitalLetterFilter::class,
+            "baz" => 'ru_number_phone',
+            "qwe" => 'structure'
+        ];
+
+        $expected = [
+            "foo" => 123,
+            "bar" => "Asd",
+            "baz" => "79502885623",
+            "qwe" => ["123" => "qwerty", "qwe" => "3123"]
+        ];
+
+        $this->assertSame($expected, $this->sanitizer::applySanitizers($data, $filters));
+    }
+
     public function testDefaultAndFakeFilters()
     {
         $data = '{"foo": "qwerty", "bar": "asd", "baz": "8 (950) 288-56-23"}';

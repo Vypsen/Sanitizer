@@ -8,7 +8,7 @@ class StructureFilter implements Filter
 {
     public function sanitize($value, $option)
     {
-        return $value;
+        return (array) $value;
     }
 
     public function validation($value): bool
