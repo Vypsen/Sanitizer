@@ -8,16 +8,16 @@ class StructureFilter implements Filter
 {
     public function sanitize($value, $option)
     {
-        // TODO: Implement sanitize() method.
+        return $value;
     }
 
     public function validation($value): bool
     {
-        // TODO: Implement validation() method.
+        return is_object($value);
     }
 
     public function errorMessageValid(): string
     {
-        // TODO: Implement errorMessageValid() method.
+        return 'value is not a structure';
     }
 }
