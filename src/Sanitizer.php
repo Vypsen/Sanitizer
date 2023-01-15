@@ -7,6 +7,7 @@ use Vypsen\Sanitizer\Filters\FloatFilter;
 use Vypsen\Sanitizer\Filters\IntegerFilter;
 use Vypsen\Sanitizer\Filters\RussianNumberPhoneFilter;
 use Vypsen\Sanitizer\Filters\StringFilter;
+use Vypsen\Sanitizer\Filters\StructureFilter;
 use Vypsen\Sanitizer\Interfaces\Filter;
 
 class Sanitizer
@@ -17,26 +18,27 @@ class Sanitizer
         'float' => FloatFilter::class,
         'ru_number_phone' => RussianNumberPhoneFilter::class,
         'array' => ArrayFilter::class,
-        'structure'
+        'structure' => StructureFilter::class,
     ];
 
-    protected static function validation($value, $filter)
+    protected static function validation($value, $objectFilter)
     {
-        if (self::existFilter($filter))
+        if (self::existFilter($objectFilter))
         {
-            if ($filter->validation($value)) return true;
-            return $filter->errorMessageValid();
+            if ($objectFilter->validation($value)) return true;
+            return $objectFilter->errorMessageValid();
         }
         else {
-            $nameClass = $filter::class;
-            throw new \Exception("{$nameClass} must be implements Vypsen\Sanitizer\Interfaces\Filter");
+            $name = $objectFilter::class;
+            throw new \Exception("filter for value '{$value}' {$name} must be implements Vypsen\Sanitizer\Interfaces\Filter");
         }
     }
 
-    public static function applySanitizers($data, $filters = null)
+    public static function applySanitizers($data, $filters)
     {
-        $data = json_decode($data);
         $answer = [];
+
+        $data = json_decode($data);
         if (count((array)$data) < count($filters))
         {
             return throw new \Exception('there are extra filters');
@@ -52,10 +54,10 @@ class Sanitizer
                 if (array_key_exists($filter, self::$tegFilters))
                 {
                     $answer[$key] = self::apply($value, self::$tegFilters[$filter], $option);
-                } else if (is_object($filter)) {
+                } else {
                     $answer[$key] = self::apply($value, $filter, $option);
                 }
-            } else {
+            } else  {
                 $answer[$key] = $value;
             }
         }
@@ -74,17 +76,20 @@ class Sanitizer
         }
         return [$filter, $option];
     }
-    protected static function existFilter($filter)
+
+    protected static function existFilter($objectFilter)
     {
-        if (!($filter instanceof Filter) || empty($filter)) {
-            return false;
-        }
-        return true;
+        return ($objectFilter instanceof Filter);
     }
 
     protected static function apply($value, $filter, $option = null)
     {
-        $objectFilter = new $filter;
+        try {
+            $objectFilter = new $filter;
+        } catch (\Throwable $e) {
+            return 'filter class not found';
+        }
+
         $valid = self::validation($value, $objectFilter);
         if ($valid !== true) {
             return $valid;
