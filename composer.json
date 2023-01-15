@@ -1,6 +1,7 @@
 {
   "name": "vypsen/sanitizer",
   "description": "sanitizer lib for php",
+  "version": "1.0.0",
   "license": "proprietary",
   "authors": [
     {
