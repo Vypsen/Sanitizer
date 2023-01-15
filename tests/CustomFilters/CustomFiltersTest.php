@@ -1,6 +1,6 @@
 <?php
 
-namespace CustomFilters;
+namespace Vypsen\Sanitizer\Tests\CustomFilters;
 
 require_once('CapitalLetterFilter.php');
 require_once('FakeNotWorkingFilter.php');

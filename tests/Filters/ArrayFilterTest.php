@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Filters;
+namespace Vypsen\Sanitizer\Tests\Filters;
 
 use PHPUnit\Framework\TestCase;
 use Vypsen\Sanitizer\Filters\ArrayFilter;

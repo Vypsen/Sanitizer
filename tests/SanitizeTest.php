@@ -1,5 +1,7 @@
 <?php
 
+namespace Vypsen\Sanitizer\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Vypsen\Sanitizer\Sanitizer;
 
@@ -35,7 +37,7 @@ class SanitizeTest extends TestCase
         $data = '{"foo": "123", "bar": "asd", "baz": "8 (950) 288-56-23"}';
         $filters = [
             "foo" => 'int',
-            "bar" => \CustomFilters\CapitalLetterFilter::class,
+            "bar" => \Vypsen\Sanitizer\Tests\CustomFilters\CapitalLetterFilter::class,
             "baz" => 'ru_number_phone'
         ];
 
@@ -53,7 +55,7 @@ class SanitizeTest extends TestCase
         $data = '{"foo": "123", "bar": "asd", "baz": "8 (950) 288-56-23", "qwe": {"123": "qwerty", "qwe": "3123"}}';
         $filters = [
             "foo" => 'int',
-            "bar" => \CustomFilters\CapitalLetterFilter::class,
+            "bar" => \Vypsen\Sanitizer\Tests\CustomFilters\CapitalLetterFilter::class,
             "baz" => 'ru_number_phone',
             "qwe" => 'structure'
         ];
@@ -72,8 +74,8 @@ class SanitizeTest extends TestCase
     {
         $data = '{"foo": "qwerty", "bar": "asd", "baz": "8 (950) 288-56-23"}';
         $filters = [
-            "foo" => \CustomFilters\FakeNotWorkingFilter::class,
-            "bar" => \CustomFilters\CapitalLetterFilter::class,
+            "foo" => \Vypsen\Sanitizer\Tests\CustomFilters\FakeNotWorkingFilter::class,
+            "bar" => \Vypsen\Sanitizer\Tests\CustomFilters\CapitalLetterFilter::class,
             "baz" => 'ru_number_phone'
         ];
 
@@ -86,7 +88,7 @@ class SanitizeTest extends TestCase
         $data = '{"foo": ["1", 2, "3"], "bar": "asd", "baz": "8 (950) 288-56-23"}';
         $filters = [
             "foo" => ['array', 'int'],
-            "bar" => \CustomFilters\CapitalLetterFilter::class,
+            "bar" => \Vypsen\Sanitizer\Tests\CustomFilters\CapitalLetterFilter::class,
             "baz" => 'FakeFilter'
         ];
 

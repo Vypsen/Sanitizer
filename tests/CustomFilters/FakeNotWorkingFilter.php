@@ -1,6 +1,6 @@
 <?php
 
-namespace CustomFilters;
+namespace Vypsen\Sanitizer\Tests\CustomFilters;
 
 class FakeNotWorkingFilter
 {
