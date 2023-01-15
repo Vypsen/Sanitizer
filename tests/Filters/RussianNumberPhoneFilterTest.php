@@ -1,5 +1,7 @@
 <?php
 
+namespace Filters;
+
 use PHPUnit\Framework\TestCase;
 use Vypsen\Sanitizer\Filters\RussianNumberPhoneFilter;
 use Vypsen\Sanitizer\Sanitizer;
@@ -8,10 +10,13 @@ class RussianNumberPhoneFilterTest extends TestCase
 {
     protected $ruNumberFilter;
     protected $sanitizer;
+    protected $filterName;
+
     protected function setUp(): void
     {
         $this->ruNumberFilter = new RussianNumberPhoneFilter();
         $this->sanitizer = new Sanitizer();
+        $this->filterName = 'ru_number_phone';
     }
 
     public function testValidationFail()
@@ -34,7 +39,7 @@ class RussianNumberPhoneFilterTest extends TestCase
         $expected = ['value' => $this->ruNumberFilter->errorMessageValid()];
 
         $data = '{"value": "123456"}';
-        $filter = ["value" => 'ru_number_phone'];
+        $filter = ["value" => $this->filterName];
         $this->assertSame($expected, $this->sanitizer::applySanitizers($data, $filter));
     }
 
@@ -42,13 +47,13 @@ class RussianNumberPhoneFilterTest extends TestCase
     {
         $expected1 = ['value' => '79502885623'];
         $data1 = '{"value": "8 (950) 288-56-23"}';
-        $filter1 = ['value' => 'ru_number_phone'];
+        $filter1 = ['value' => $this->filterName];
 
         $this->assertSame($expected1, $this->sanitizer::applySanitizers($data1, $filter1));
 
         $expected1 = ['value' => '78005553535'];
         $data1 = '{"value": "88005553535"}';
-        $filter1 = ['value' => 'ru_number_phone'];
+        $filter1 = ['value' => $this->filterName];
         $this->assertSame($expected1, $this->sanitizer::applySanitizers($data1, $filter1));
     }
 }
